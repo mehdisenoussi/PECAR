@@ -1,4 +1,4 @@
-function [P1,P2,probe_info,grat_info,validity,delays_uniq,respCue, congruency] =...
+function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
     pecar_p_probe_analysis(data_loc, obs,printFg,byvalidity,bycongru,onlycorrect,probeGratPos)
     %% Parameters
     % obs = e.g. 'ax'; (observer's initials)
@@ -27,14 +27,12 @@ function [P1,P2,probe_info,grat_info,validity,delays_uniq,respCue, congruency] =
     %              3 = both probes on contra-response cue hemifield);
         
 
-    %% Obtain pboth, pone and pnone for each run and concatenate over run
+    %% Obtain pboth, pone and pnone for each run and concatenate over sessions
     probe_info=[]; validity=[]; delays=[];grat_info=[]; respCue=[];
     pboth_all=[]; pone_all=[]; pnone_all=[]; congruency=[];
 
-    % Load data
     subjdata_loc=[data_loc 'subj_' obs '/'];
     files = dir(strrep(subjdata_loc,'/',filesep));
-
     for file_n = 1:size(files,1)
         filename = files(file_n).name;
         fileL = size(filename,2);
@@ -83,7 +81,7 @@ function [P1,P2,probe_info,grat_info,validity,delays_uniq,respCue, congruency] =
     [P1, P2] = quadratic_analysis(pboth_ND, pnone_ND);
 
 
-    %%
+    %% if printFg print individual observers' 
     if printFg
         saveFileLoc = '/figures/probetask/by_delay_val_cong/';
         delays_uniq=linspace(40,520,13);
@@ -112,7 +110,7 @@ function [P1,P2,probe_info,grat_info,validity,delays_uniq,respCue, congruency] =
             end
         end
         suptitle(sprintf('Raw proba - subj: (%s)\t -',obs));
-        namefig=[data_loc saveFileLoc obs '_probetask_rawProbs'];
+        namefig=[data_loc saveFileLoc 'probetask_rawProbs_' obs];
         set(gcf,'PaperPositionMode','auto')
         print (namefig, '-djpeg', '-r0');
         close
@@ -139,7 +137,7 @@ function [P1,P2,probe_info,grat_info,validity,delays_uniq,respCue, congruency] =
             end
         end
         suptitle(sprintf('P1 & P2 - subj: (%s)\t -',obs));
-        namefig=[data_loc saveFileLoc obs '_p1p2'];
+        namefig=[data_loc saveFileLoc 'p1p2_' obs];
         set(gcf,'PaperPositionMode','auto')
         print (namefig, '-djpeg', '-r0');
         close
@@ -162,7 +160,7 @@ function [P1,P2,probe_info,grat_info,validity,delays_uniq,respCue, congruency] =
             end
         end
         suptitle(sprintf('P1 - P2 - subj: (%s)\t -',obs));
-        namefig=[data_loc saveFileLoc obs '_diff_p1p2'];
+        namefig=[data_loc saveFileLoc 'diff_p1p2_' obs];
         set(gcf,'PaperPositionMode','auto')
         print(namefig, '-djpeg', '-r0');
         close

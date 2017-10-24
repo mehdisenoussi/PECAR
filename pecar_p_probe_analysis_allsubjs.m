@@ -1,5 +1,6 @@
-addpath(genpath('~/Dropbox/postphd/laura/pecar/soft/mrTools-master'))
-addpath(genpath('~/Dropbox/postphd/laura/pecar/soft/mgl-master/'))
+pecar_loc='/Users/mehdisenoussi/Dropbox/postphd/laura/pecar/';
+addpath(genpath([pecar_loc 'soft/mrTools-master']))
+addpath(genpath([pecar_loc 'soft/mgl-master/']))
 data_loc='/Volumes/PNY/PECAR/data/';
 delays=40:40:520;
 
@@ -37,7 +38,7 @@ for byvalidity=[true]
                 [P1_all(:,:,:,obs_i), P2_all(:,:,:,obs_i), probe_info_all{obs_i},...
                     grat_info_all{obs_i}, validity_all{obs_i},delays_all{obs_i},...
                     respCue_all{obs_i}, congruency_all{obs_i}] = pecar_p_probe_analysis(...
-                    data_loc,obs,false,byvalidity,bycongru,onlycorrect,probeGratPos);
+                    data_loc,obs,true,byvalidity,bycongru,onlycorrect,probeGratPos);
             end
             if save_data
                 n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
@@ -77,9 +78,9 @@ else plot_order=[1 2 3]; congrus=[1]; txtcongru=''; end
 if byvalidity; vals=2:-1:1; txtval='_byvalidity'; else vals=[1]; end
 if onlycorrect; txtcorrect='_onlycorrect'; end
 
-n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
-        n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
-load(n_obs_data_filename)
+% n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
+%         n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
+% load(n_obs_data_filename)
         
 figure('Position',get(groot,'ScreenSize'));
 plotn=1;

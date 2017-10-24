@@ -1,10 +1,34 @@
 function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
-    congruency]=pecar_probe_analysis(obs, file, onlycorrect, probeGratPos)
+    congruency] = pecar_probe_analysis(obs, file, onlycorrect, probeGratPos)
     %% This program analyzes the probe task for individual stim files
     %
     % Parameters
     % obs = 'ax'; (observer's initials)
     % file = '150716_stim01.mat'; (name of stim file)
+    % onlycorrect = whether to only analyze trials where the response to the
+    %               grating task was correct
+    % probeGratPos = 'All'/'NoOverlap'/'OneSame'/'BothSame'/'TargetSame'/'DistrSame'
+    %                 (only analyses trials in which there was a specific
+    %                 probe-grating position relationship)
+    %
+    % Outputs : All outputs contains data for one session (one raw data file)
+    %
+    % pboth = whether both probes were reported correctly for each trial
+    % pone = whether only one probe was reported correctly for each trial
+    % pboth = whether no probe was reported correctly for each trial
+    % probe_info = info for probes for each trial
+    %              dimensions: n_trials*5*2 = trial_n * (probe identity, nothing,
+    %                          probePosX, probePosY, correctResp) * probe 1/2
+    % grat_info = info for gratings for each trial = n_trials*3*2
+    %             dimensions: n_trials*3*2 = trial_n * (grating x position
+    %                         in degrees of visual angle from fixation,
+    %                         grating y position, tilt in degrees) * grating 1/2
+    % validity = validity for each trial (1 = invalid, 2 = valid);
+    % delays = delay of probe presentation for each trial (1 to 13);
+    % respCue = response cue for each trial (1 = left or 2 = right)
+    % congruency = congruency for each trial (1 = one probe on each hemifield,
+    %              2 = both probes on response cue hemifield,
+    %              3 = both probes on contra-response cue hemifield);
 
     % Load the data
     dir_name='/Volumes/PNY/PECAR/data';
@@ -13,13 +37,13 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
     load(strrep(file_loc,'\',filesep))
 
     %% Get Probe data
+    %%% Probe identity
+    identity = [1 0;2 0;3 0;4 0;5 0;6 0;7 0;8 0;9 0;10 0;11 0;12 0];
     % Probe positions
     positions = [-16 -13.25 -10.5 -7.75 -5 -2.25 0.5 3.25 6 8.75 11.5 14.25];
 
     exp = getTaskParameters(myscreen,task);
-    
     expProbe = task{1}.probeTask;
-    
     respCorr=task{1}.randVars.responseCorr;
     if size(respCorr,2)~=exp.nTrials
         respCorr(end:exp.nTrials)=false;
@@ -41,8 +65,8 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
 
     ntrials=size(task{1,1}.probeTask.probePresented1,2);
     grat_info=zeros(ntrials,3,2);
-    % dimensions: n_trials,(probe identity, nothing, probePosX, probePosY,
-    % correctResp), probe1or2
+    % probe_info dimensions: n_trials,(probe identity, nothing, probePosX,
+    % probePosY, correctResp), probe1or2
     probe_info=zeros(ntrials,5,2); probe_info(:,5,:)=NaN;
     for i=1:ntrials
         if isfield(task{1,1},'gratingTask')
@@ -56,7 +80,9 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
         grat_info(end:exp.nTrials,:,:)=0;
         probe_info(end:exp.nTrials,:,:)=0;
     end
-    uniq1=unique(grat_info(:,1,1));
+    
+    %% Get all information of probe - grating relation to only use specific trials
+    % depending on probeGratPos
     
     % for each trial check if 1 of the probes' pos = 1 of the grats' pos
     probeGratSamePosOne=grat_info(:,1,1)==probe_info(:,3,1) |...
@@ -113,7 +139,7 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
     congruency=exp.randVars.probeside(theTrials);
     delays=exp.randVars.delays(theTrials);
     
-    %% Revert the order of the list
+    %% Compare presented and reported probes to get number of correct reports
     pboth = NaN(1,ntrials); pnone = NaN(1,ntrials); pone = NaN(1,ntrials);
 
     % theTrials contains the trial numbers for the conditions set by the parameters
@@ -123,16 +149,15 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
             if ~isempty(expProbe.probeResponse1{trial_n})
                 idx1 = find(positions == expProbe.probeResponse1{trial_n});
                 idx2 = find(positions == expProbe.probeResponse2{trial_n});
+                selected_idx1 = expProbe.list{trial_n}==idx1;
+                selected_idx2 = expProbe.list{trial_n}==idx2;
+                reported1 = identity(selected_idx1,:);
+                reported2 = identity(selected_idx2,:);                
+                presented1 = expProbe.probePresented1{trial_n};
+                presented2 = expProbe.probePresented2{trial_n};
 
-%                 selected_idx1 = expProbe.list{trial_n}==idx1;
-%                 selected_idx2 = expProbe.list{trial_n}==idx2;
-                reported1 = expProbe.list{trial_n}(idx1); %identity(selected_idx1,:);
-                reported2 = expProbe.list{trial_n}(idx2); %identity(selected_idx2,:);
-                presented1 = expProbe.probePresented1{trial_n}(1);
-                presented2 = expProbe.probePresented2{trial_n}(1);
-
-                cor1=(reported1==presented1)||(reported2==presented1);
-                cor2=(reported1==presented2)||(reported2==presented2);
+                cor1=(reported1(1)==presented1(1))||(reported2(1)==presented1(1));
+                cor2=(reported1(1)==presented2(1))||(reported2(1)==presented2(1));
                 probe_info(index,5,:)=[cor1,cor2];
                 cor12=cor1+cor2;
                 pboth(index)=cor12==2; pone(index)=cor12==1; pnone(index)=cor12==0;
