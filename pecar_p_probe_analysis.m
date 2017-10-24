@@ -1,21 +1,25 @@
 function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
     pecar_p_probe_analysis(data_loc, obs,printFg,byvalidity,bycongru,onlycorrect,probeGratPos)
-    %% Parameters
+    %
+    % Parameters
+    %
     % obs = e.g. 'ax'; (observer's initials)
-    % printFg = true/false; (figures are printed and saved for each subject)
+    % printFg = true/false; (figures are printed and saved for each observer)
     % byvalidity = true/false; (separate analysis for valid and invalid trials)
     % bycongru = true/false; (separate analysis by trial congruencies condition)
     % onlycorrect = true/false; (analyze only trials with correct response to grating task)
     % probeGratPos = 'All'/'NoOverlap'/'OneSame'/'BothSame'/'TargetSame'/'DistrSame'
     %                 (only analyses trials in which there was a specific
     %                 probe-grating position relationship)
-    %% Outputs
+    %
+    % Outputs
+    %
     % P1 = 2D (or 3D) P1 values for each delay*validity(*congruency)
     % P2 = 2D (or 3D) P2 values for each delay*validity(*congruency)
     % probe_info = info for probes for each trial
     %              dimensions: n_trials*5*2 = trial_n * (probe identity, nothing,
     %                          probePosX, probePosY, correctResp) * probe 1/2
-    % grat_info = info for gratings for each trial = n_trials*3*2
+    % grat_info = info for gratings for each trial
     %             dimensions: n_trials*3*2 = trial_n * (grating x position
     %                         in degrees of visual angle from fixation,
     %                         grating y position, tilt in degrees) * grating 1/2
@@ -31,15 +35,15 @@ function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
     probe_info=[]; validity=[]; delays=[];grat_info=[]; respCue=[];
     pboth_all=[]; pone_all=[]; pnone_all=[]; congruency=[];
 
-    subjdata_loc=[data_loc 'subj_' obs '/'];
-    files = dir(strrep(subjdata_loc,'/',filesep));
+    obsdata_loc=[data_loc 'subj_' obs '/'];
+    files = dir(strrep(obsdata_loc,'/',filesep));
     for file_n = 1:size(files,1)
         filename = files(file_n).name;
         fileL = size(filename,2);
         if fileL == 17 && strcmp(filename(fileL-4+1:fileL),'.mat') && isa(str2double(filename(1:6)),'double')
             [pboth,pone,pnone,probe_info_block,validity_block,delays_block,...
                 grat_info_block, respCue_block, congruency_block]=...
-                pecar_probe_analysis(obs, filename, onlycorrect, probeGratPos);
+                pecar_probe_analysis(obsdata_loc, filename, onlycorrect, probeGratPos);
             probe_info=cat(1,probe_info,probe_info_block);
             validity=cat(2,validity,validity_block);
             delays=cat(2,delays,delays_block);
@@ -83,7 +87,7 @@ function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
 
     %% if printFg print individual observers' 
     if printFg
-        saveFileLoc = '/figures/probetask/by_delay_val_cong/';
+        saveFileLoc = '/figures/probetask/';
         delays_uniq=linspace(40,520,13);
         if bycongru; plot_order=[1 3 5 2 4 6]; else plot_order=[1 2]; end
         
@@ -109,7 +113,7 @@ function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
                 axis square
             end
         end
-        suptitle(sprintf('Raw proba - subj: (%s)\t -',obs));
+        suptitle(sprintf('Raw proba - obs: (%s)\t -',obs));
         namefig=[data_loc saveFileLoc 'probetask_rawProbs_' obs];
         set(gcf,'PaperPositionMode','auto')
         print (namefig, '-djpeg', '-r0');
@@ -136,7 +140,7 @@ function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
                 axis square
             end
         end
-        suptitle(sprintf('P1 & P2 - subj: (%s)\t -',obs));
+        suptitle(sprintf('P1 & P2 - obs: (%s)\t -',obs));
         namefig=[data_loc saveFileLoc 'p1p2_' obs];
         set(gcf,'PaperPositionMode','auto')
         print (namefig, '-djpeg', '-r0');
@@ -159,7 +163,7 @@ function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
                 axis square
             end
         end
-        suptitle(sprintf('P1 - P2 - subj: (%s)\t -',obs));
+        suptitle(sprintf('P1 - P2 - obs: (%s)\t -',obs));
         namefig=[data_loc saveFileLoc 'diff_p1p2_' obs];
         set(gcf,'PaperPositionMode','auto')
         print(namefig, '-djpeg', '-r0');

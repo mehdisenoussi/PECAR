@@ -1,10 +1,11 @@
 function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
-    congruency] = pecar_probe_analysis(obs, file, onlycorrect, probeGratPos)
+    congruency] = pecar_probe_analysis(obsdata_loc, file, onlycorrect, probeGratPos)
     %% This program analyzes the probe task for individual stim files
     %
     % Parameters
-    % obs = 'ax'; (observer's initials)
-    % file = '150716_stim01.mat'; (name of stim file)
+    %
+    % obsdata_loc = directory containing the data file
+    % file = '150716_stim01.mat'; (name of data file)
     % onlycorrect = whether to only analyze trials where the response to the
     %               grating task was correct
     % probeGratPos = 'All'/'NoOverlap'/'OneSame'/'BothSame'/'TargetSame'/'DistrSame'
@@ -30,10 +31,8 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
     %              2 = both probes on response cue hemifield,
     %              3 = both probes on contra-response cue hemifield);
 
-    % Load the data
-    dir_name='/Volumes/PNY/PECAR/data';
-    dir_loc=[dir_name '\subj_' obs '\'];
-    file_loc = [dir_loc file];
+    %% Load the data
+    file_loc = [obsdata_loc file];
     load(strrep(file_loc,'\',filesep))
 
     %% Get Probe data

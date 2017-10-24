@@ -1,7 +1,6 @@
 pecar_loc='/Users/mehdisenoussi/Dropbox/postphd/laura/pecar/';
-addpath(genpath([pecar_loc 'soft/mrTools-master']))
 addpath(genpath([pecar_loc 'soft/mgl-master/']))
-data_loc='/Volumes/PNY/PECAR/data/';
+data_loc = [pecar_loc 'pecar_data/'];
 delays=40:40:520;
 
 %observers=['cs'; 'sr'; 'ym'; 'ac'; 'al'; 'sa'; 'el'; 'gm'; 'hs'; 'hw'; 'js'; 'ma'; 'nv'];
@@ -41,7 +40,7 @@ for byvalidity=[true]
                     data_loc,obs,true,byvalidity,bycongru,onlycorrect,probeGratPos);
             end
             if save_data
-                n_obs_data_filename=[pecar_loc 'pecar_data/' sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
+                n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
                     n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
                 save(n_obs_data_filename, 'observers', 'P1_all','P2_all');
             end
@@ -54,12 +53,12 @@ tic
 repeatnumber=100000;
 txtval='_byvalidity';
 for bycongru=[false]
-    n_obs_data_filename=[pecar_loc 'pecar_data/' sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
+    n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
         n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
     load(n_obs_data_filename);
     for val=vals
         for cong=congrus
-            pecar_p1p2_bootstrap(pecar_loc, squeeze(P1_all(:,val,cong,:)),...
+            pecar_p1p2_bootstrap(data_loc, squeeze(P1_all(:,val,cong,:)),...
                 squeeze(P2_all(:,val,cong,:)), repeatnumber, val, probeGratPos);
         end
     end
@@ -78,7 +77,7 @@ else plot_order=[1 2 3]; congrus=[1]; txtcongru=''; end
 if byvalidity; vals=2:-1:1; txtval='_byvalidity'; else vals=[1]; end
 if onlycorrect; txtcorrect='_onlycorrect'; end
 
-n_obs_data_filename=[pecar_loc 'pecar_data/' sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
+n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
         n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
 load(n_obs_data_filename)
 
@@ -145,8 +144,8 @@ suptitle(sprintf('P1 minus P2 - %i subj - probeGratPos : %s ',n_obs, probeGratPo
 %% Amplitude spectrum
 
 Fs = 1/.04; T = 1/Fs; L = 13-1; t = (0:L-1)*T; f = Fs*(0:(L/2))/L; freqs=f(2:end);
-load([pecar_loc 'pecar_data/' 'fft_p_All_invalid_11subjs.mat'])
-load([pecar_loc 'pecar_data/' 'fft_p_All_valid_11subjs.mat'])
+load([data_loc 'fft_p_All_invalid_11subjs.mat'])
+load([data_loc 'fft_p_All_valid_11subjs.mat'])
 fft_p_all=cat(3,fft_p_invalid, fft_p_valid);
 ci=1-(.05/6);
 
