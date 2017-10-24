@@ -152,7 +152,7 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
                 selected_idx1 = expProbe.list{trial_n}==idx1;
                 selected_idx2 = expProbe.list{trial_n}==idx2;
                 reported1 = identity(selected_idx1,:);
-                reported2 = identity(selected_idx2,:);                
+                reported2 = identity(selected_idx2,:);
                 presented1 = expProbe.probePresented1{trial_n};
                 presented2 = expProbe.probePresented2{trial_n};
 
