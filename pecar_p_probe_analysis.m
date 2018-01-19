@@ -1,4 +1,4 @@
-function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
+function [P1,P2,Delta,probe_info,grat_info,validity,delays,respCue, congruency] =...
     pecar_p_probe_analysis(data_loc, obs,printFg,byvalidity,bycongru,onlycorrect,probeGratPos)
     %
     % Parameters
@@ -82,7 +82,7 @@ function [P1,P2,probe_info,grat_info,validity,delays,respCue, congruency] =...
             end
         end
     end
-    [P1, P2] = quadratic_analysis(pboth_ND, pnone_ND);
+    [P1, P2, Delta] = quadratic_analysis(pboth_ND, pnone_ND);
 
 
     %% if printFg print individual observers' 

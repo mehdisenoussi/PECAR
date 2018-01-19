@@ -28,27 +28,30 @@ for byvalidity=[true]
             
             P1_all=zeros(13,size(vals,2),size(congrus,2),n_obs);
             P2_all=zeros(13,size(vals,2),size(congrus,2),n_obs);
+            Delta_all=zeros(13,size(vals,2),size(congrus,2),n_obs);
             probe_info_all={}; grat_info_all={}; delays_all={}; respCue_all={};
             validity_all={}; congruency_all={};
 
             for obs_i=1:n_obs
                 obs=observers(obs_i,:);
                 fprintf(sprintf('subject %s\n',obs));
-                [P1_all(:,:,:,obs_i), P2_all(:,:,:,obs_i), probe_info_all{obs_i},...
-                    grat_info_all{obs_i}, validity_all{obs_i},delays_all{obs_i},...
-                    respCue_all{obs_i}, congruency_all{obs_i}] = pecar_p_probe_analysis(...
-                    data_loc,obs,true,byvalidity,bycongru,onlycorrect,probeGratPos);
+                [P1_all(:,:,:,obs_i), P2_all(:,:,:,obs_i),...
+                    Delta_all(:,:,:,obs_i), probe_info_all{obs_i},...
+                    grat_info_all{obs_i}, validity_all{obs_i},...
+                    delays_all{obs_i}, respCue_all{obs_i},...
+                    congruency_all{obs_i}] = pecar_p_probe_analysis(data_loc,...
+                    obs,false,byvalidity,bycongru,onlycorrect,probeGratPos);
             end
             if save_data
-                n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2%s%s%s_probeGratPos_%s',...
+                n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2_Delta%s%s%s_probeGratPos_%s',...
                     n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
-                save(n_obs_data_filename, 'observers', 'P1_all','P2_all');
+                save(n_obs_data_filename, 'observers', 'P1_all','P2_all', 'Delta_all');
             end
         end
     end
 end
 
-%% make bootstrap
+%% make bootstrap for P1 minus P2 FFT amplitude
 tic
 repeatnumber=100000;
 txtval='_byvalidity';
@@ -60,6 +63,23 @@ for bycongru=[false]
         for cong=congrus
             pecar_p1p2_bootstrap(data_loc, squeeze(P1_all(:,val,cong,:)),...
                 squeeze(P2_all(:,val,cong,:)), repeatnumber, val, probeGratPos);
+        end
+    end
+end
+toc
+
+%% make bootstrap for Delta FFT amplitude
+tic
+repeatnumber=100000;
+txtval='_byvalidity';
+for bycongru=[false]
+    n_obs_data_filename=[data_loc sprintf('%iobs_P1_P2_Delta%s%s%s_probeGratPos_%s',...
+        n_obs,txtval,txtcongru,txtcorrect,probeGratPos)];
+    load(n_obs_data_filename);
+    for val=vals
+        for cong=congrus
+            pecar_d_bootstrap(data_loc, squeeze(Delta_all(:,val,cong,:)),...
+                repeatnumber, val, probeGratPos);
         end
     end
 end
@@ -97,11 +117,9 @@ for val=vals
 
         set(gca,'YTick',-.1:.2:.7,'FontSize',13,'LineWidth',2','Fontname','Ariel')
         set(gca,'XTick',0:100:500,'FontSize',13,'LineWidth',2','Fontname','Ariel')
-
-        if plot_order(plotn-1)==5
-            ylabel('Probe report probabilities','FontSize',12,'Fontname','Ariel')
-            xlabel('Time from search task onset [ms]','FontSize',12,'Fontname','Ariel')
-        end
+        
+        ylabel('Probe report probabilities','FontSize',12,'Fontname','Ariel')
+        xlabel('Time from search task onset [ms]','FontSize',12,'Fontname','Ariel')
         ylim([0 1]); xlim([0 540])
         axis square
     end
@@ -125,7 +143,7 @@ for val=vals
         end
         errorbar(delays,mean(Pdiff(:,val,cong,:),4), std(Pdiff(:,val,cong,:),[],4)./sqrt(n_obs),...
             'ro-','LineWidth',3,'MarkerFaceColor',[1 1 1],'MarkerSize',12,'Color',[.2 .2 .2])
-        
+
         set(gca,'YTick',-.1:.2:.7,'FontSize',13,'LineWidth',2','Fontname','Ariel')
         set(gca,'XTick',0:100:500,'FontSize',13,'LineWidth',2','Fontname','Ariel')
         
@@ -134,7 +152,7 @@ for val=vals
             ylabel('difference P1-P2','FontSize',12,'Fontname','Ariel')
             xlabel('Time from search task onset [ms]','FontSize',12,'Fontname','Ariel')
         end
-        ylim([-.3 .5]); xlim([0 540])
+        ylim([-.2 .4]); xlim([0 540])
         axis square
     end
 end
@@ -157,7 +175,7 @@ gch=interp1(1:size(C,1),C(:,2),1:.01:size(C,1));
 bch=interp1(1:size(C,1),C(:,3),1:.01:size(C,1));
 C=[rch;gch;bch]';
 
-Pdiff=P1_all-P2_all;
+%Pdiff=P1_all-P2_all;
 fft_Pdiff=fft(Pdiff,13,1);
 a_fft_Pdiff=abs(fft_Pdiff);
 a_fft_Pdiff=a_fft_Pdiff(2:size(freqs,2)+1,:,:,:);
@@ -175,7 +193,7 @@ for val=vals
             end
         end
         
-        set(gca,'YTick',.5:.1:1.6,'FontSize',13,'LineWidth',2','Fontname','Ariel')
+        set(gca,'YTick',.0:.1:1.6,'FontSize',13,'LineWidth',2','Fontname','Ariel')
         set(gca,'XTick',f(2:end),'FontSize',13,'LineWidth',2','Fontname','Ariel')
 
         if plot_surrs_lvl || plot_surrs_gradient

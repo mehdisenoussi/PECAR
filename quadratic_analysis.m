@@ -1,4 +1,4 @@
-function [p1,p2] = quadratic_analysis(pBoth,pNone)
+function [p1,p2,delta] = quadratic_analysis(pBoth,pNone)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% This function calculates for each individual p1 and p2 (i.e. the amount %%%
 %%% of attention at each of the two probe locations) based on pBoth         %%%
