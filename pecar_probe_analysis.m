@@ -82,6 +82,7 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
     
     %% Get all information of probe - grating relation to only use specific trials
     % depending on probeGratPos
+    % ('All', 'NoOverlap', 'BothSame', 'OneSame', 'TargetSame', 'DistrSame')
     
     % for each trial check if 1 of the probes' pos = 1 of the grats' pos
     probeGratSamePosOne=grat_info(:,1,1)==probe_info(:,3,1) |...
@@ -101,31 +102,36 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
         grat_info(:,1,1)==probe_info(:,3,2) |...
         grat_info(:,1,2)==probe_info(:,3,2);
     
-    % target side
+    % probe at target pos
     gratTargPos=zeros(1,exp.nTrials);
     for i=1:exp.nTrials; gratTargPos(i) = grat_info(i,1,respCue(i)); end
     probeTargSamePos=gratTargPos==probe_info(:,3,1)' |...
         gratTargPos==probe_info(:,3,2)';
     
-    % distractor side
+    % probe at distractor pos
     distrSide=~(respCue-1)+1; gratDistrPos=zeros(1,exp.nTrials);
     for i=1:exp.nTrials; gratDistrPos(i)=grat_info(i,1,distrSide(i)); end
     probeDistrSamePos=gratDistrPos==probe_info(:,3,1)' |...
         gratDistrPos==probe_info(:,3,2)';
+    
+    % probes do not overlap or distractor pos (in other words not target pos)
+    probeGratDistrSameNoOverlap = probeDistrSamePos' | probeGratNoOverlap;
 
     switch probeGratPos
         case 'All'
-            probeGratRelation=true(1, exp.nTrials);
+            probeGratRelation = true(1, exp.nTrials);
         case 'OneSame'
-            probeGratRelation=probeGratSamePosOne';
+            probeGratRelation = probeGratSamePosOne';
         case 'BothSame'
-            probeGratRelation=probeGratSamePosTwo';
+            probeGratRelation = probeGratSamePosTwo';
         case 'TargetSame'
-            probeGratRelation=probeTargSamePos;
+            probeGratRelation = probeTargSamePos;
         case 'DistrSame'
-            probeGratRelation=probeDistrSamePos;
+            probeGratRelation = probeDistrSamePos;
         case 'NoOverlap'
-            probeGratRelation=probeGratNoOverlap';
+            probeGratRelation = probeGratNoOverlap';
+        case 'DistrSameAndNoOverlap'
+            probeGratRelation = probeGratDistrSameNoOverlap';
     end
     
     theTrials = find(nofixbreaktrials & correctness & probeGratRelation);
