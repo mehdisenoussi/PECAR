@@ -1,4 +1,4 @@
-function pecar_p1p2_bootstrap(data_loc, subj_pA, subj_pB, repeatnumber,validity, probeGratPos)
+function pecar_p1p2_bootstrap(data_loc, subj_pA, subj_pB, repeatnumber, validity)
     
     n_delays=size(subj_pA,1); n_obs=size(subj_pA,2);
     fft_p = zeros(repeatnumber, n_delays);
@@ -24,12 +24,12 @@ function pecar_p1p2_bootstrap(data_loc, subj_pA, subj_pB, repeatnumber,validity,
     % save average fft amplitude computed by observer
     if validity==2; txtval=''; fft_p_valid=fft_p(:,2:((n_delays-1)/2+1));
     else txtval='in'; fft_p_invalid=fft_p(:,2:((n_delays-1)/2+1)); end
-    save([data_loc sprintf('fft_p_%s_%svalid_11subjs.mat',probeGratPos,...
+    save([data_loc sprintf('fft_p_%svalid_11subjs.mat',...
         txtval)], sprintf('fft_p_%svalid',txtval))
     
     % save average fft amplitude computed on average across observers
     if validity==2; txtval=''; fft_p_valid=fft_ALL_p(:,2:((n_delays-1)/2+1));
     else txtval='in'; fft_p_invalid=fft_ALL_p(:,2:((n_delays-1)/2+1)); end
-    save([data_loc sprintf( 'fft_ALL_p_%s_%svalid_11subjs.mat',probeGratPos,...
-        txtval)], sprintf('fft_p_%svalid',txtval)) 
+    save([data_loc sprintf( 'fft_ALL_p_%svalid_11subjs.mat',...
+        txtval)], sprintf('fft_p_%svalid', txtval)) 
 end

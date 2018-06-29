@@ -1,16 +1,11 @@
-function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
-    congruency] = pecar_probe_analysis(obsdata_loc, file, onlycorrect, probeGratPos)
+function [pboth, pone, pnone, probe_info, validity, delays, grat_info,...
+    respCue, congruency] = pecar_probe_analysis(obsdata_loc, file)
     %% This program analyzes the probe task for individual stim files
     %
     % Parameters
     %
     % obsdata_loc = directory containing the data file
     % file = '150716_stim01.mat'; (name of data file)
-    % onlycorrect = whether to only analyze trials where the response to the
-    %               grating task was correct
-    % probeGratPos = 'All'/'NoOverlap'/'OneSame'/'BothSame'/'TargetSame'/'DistrSame'
-    %                 (only analyses trials in which there was a specific
-    %                 probe-grating position relationship)
     %
     % Outputs : All outputs contains data for one session (one raw data file)
     %
@@ -33,7 +28,7 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
 
     %% Load the data
     file_loc = [obsdata_loc file];
-    load(strrep(file_loc,'\',filesep))
+    load(strrep(file_loc, '\', filesep))
 
     %% Get Probe data
     %%% Probe identity
@@ -43,105 +38,52 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
 
     exp = getTaskParameters(myscreen,task);
     expProbe = task{1}.probeTask;
-    respCorr=task{1}.randVars.responseCorr;
-    if size(respCorr,2)~=exp.nTrials
-        respCorr(end:exp.nTrials)=false;
+    respCorr = task{1}.randVars.responseCorr;
+    if size(respCorr, 2) ~= exp.nTrials
+        respCorr(end:exp.nTrials) = false;
     end
-    if onlycorrect; correctness=respCorr==1;
-    else correctness=logical(ones(1,exp.nTrials));
-    end
-    nofixbreaktrials=~logical(task{1,1}.randVars.fixBreak);
-    if exp.nTrials~=size(nofixbreaktrials,2)
-        nofixbreaktrials(end:exp.nTrials)=false;
+
+    %correctness = 2;    
+    
+    nofixbreaktrials = ~logical(task{1, 1}.randVars.fixBreak);
+    if exp.nTrials ~= size(nofixbreaktrials, 2)
+        nofixbreaktrials(end:exp.nTrials) = false;
     end
     
     %% get response cue, target and gratings & probe positions
     
-    cue=exp.randVars.cueside;
-    a=logical(cue-1);
-    a(~logical(exp.randVars.validity<4))=~a(~logical(exp.randVars.validity<4));
-    respCue=a+1;
+    cue = exp.randVars.cueside;
+    a = logical(cue-1);
+    a(~logical(exp.randVars.validity < 4)) = ~a(~logical(exp.randVars.validity < 4));
+    respCue = a+1;
 
-    ntrials=size(task{1,1}.probeTask.probePresented1,2);
-    grat_info=zeros(ntrials,3,2);
+    ntrials = size(task{1, 1}.probeTask.probePresented1, 2);
+    grat_info = zeros(ntrials, 3, 2);
     % probe_info dimensions: n_trials,(probe identity, nothing, probePosX,
     % probePosY, correctResp), probe1or2
-    probe_info=zeros(ntrials,5,2); probe_info(:,5,:)=NaN;
-    for i=1:ntrials
-        if isfield(task{1,1},'gratingTask')
-            grat_info(i,:,1)=task{1,1}.gratingTask.probePresented1{i};
-            grat_info(i,:,2)=task{1,1}.gratingTask.probePresented2{i};
+    probe_info = zeros(ntrials, 5, 2); probe_info(:, 5, :) = NaN;
+    for i = 1:ntrials
+        if isfield(task{1,1}, 'gratingTask')
+            grat_info(i, :, 1) = task{1,1}.gratingTask.probePresented1{i};
+            grat_info(i, :, 2) = task{1,1}.gratingTask.probePresented2{i};
         end
-        probe_info(i,1:4,1)=task{1,1}.probeTask.probePresented1{i};
-        probe_info(i,1:4,2)=task{1,1}.probeTask.probePresented2{i};
+        probe_info(i, 1:4, 1) = task{1,1}.probeTask.probePresented1{i};
+        probe_info(i, 1:4, 2) = task{1,1}.probeTask.probePresented2{i};
     end
-    if size(grat_info,1)~=exp.nTrials
-        grat_info(end:exp.nTrials,:,:)=0;
-        probe_info(end:exp.nTrials,:,:)=0;
-    end
-    
-    %% Get all information of probe - grating relation to only use specific trials
-    % depending on probeGratPos
-    % ('All', 'NoOverlap', 'BothSame', 'OneSame', 'TargetSame', 'DistrSame')
-    
-    % for each trial check if 1 of the probes' pos = 1 of the grats' pos
-    probeGratSamePosOne=grat_info(:,1,1)==probe_info(:,3,1) |...
-        grat_info(:,1,2)==probe_info(:,3,1) |...
-        grat_info(:,1,1)==probe_info(:,3,2) |...
-        grat_info(:,1,2)==probe_info(:,3,2);
-    
-    % for each trial none of the probes' pos = any of the grats' pos
-    probeGratNoOverlap=grat_info(:,1,1)~=probe_info(:,3,1) &...
-        grat_info(:,1,2)~=probe_info(:,3,1) &...
-        grat_info(:,1,1)~=probe_info(:,3,2) &...
-        grat_info(:,1,2)~=probe_info(:,3,2);
-    
-    % same thing but if both probes were at the gratings' positions
-    probeGratSamePosTwo=grat_info(:,1,1)==probe_info(:,3,1) |...
-        grat_info(:,1,2)==probe_info(:,3,1) &...
-        grat_info(:,1,1)==probe_info(:,3,2) |...
-        grat_info(:,1,2)==probe_info(:,3,2);
-    
-    % probe at target pos
-    gratTargPos=zeros(1,exp.nTrials);
-    for i=1:exp.nTrials; gratTargPos(i) = grat_info(i,1,respCue(i)); end
-    probeTargSamePos=gratTargPos==probe_info(:,3,1)' |...
-        gratTargPos==probe_info(:,3,2)';
-    
-    % probe at distractor pos
-    distrSide=~(respCue-1)+1; gratDistrPos=zeros(1,exp.nTrials);
-    for i=1:exp.nTrials; gratDistrPos(i)=grat_info(i,1,distrSide(i)); end
-    probeDistrSamePos=gratDistrPos==probe_info(:,3,1)' |...
-        gratDistrPos==probe_info(:,3,2)';
-    
-    % probes do not overlap or distractor pos (in other words not target pos)
-    probeGratDistrSameNoOverlap = probeDistrSamePos' | probeGratNoOverlap;
-
-    switch probeGratPos
-        case 'All'
-            probeGratRelation = true(1, exp.nTrials);
-        case 'OneSame'
-            probeGratRelation = probeGratSamePosOne';
-        case 'BothSame'
-            probeGratRelation = probeGratSamePosTwo';
-        case 'TargetSame'
-            probeGratRelation = probeTargSamePos;
-        case 'DistrSame'
-            probeGratRelation = probeDistrSamePos;
-        case 'NoOverlap'
-            probeGratRelation = probeGratNoOverlap';
-        case 'DistrSameAndNoOverlap'
-            probeGratRelation = probeGratDistrSameNoOverlap';
+    if size(grat_info, 1) ~= exp.nTrials
+        grat_info(end:exp.nTrials, :, :) = 0;
+        probe_info(end:exp.nTrials, :, :) = 0;
     end
     
-    theTrials = find(nofixbreaktrials & correctness & probeGratRelation);
-    grat_info=grat_info(theTrials,:,:);
-    probe_info=probe_info(theTrials,:,:);
-    respCue=respCue(theTrials);
-    ntrials=size(theTrials,2);
+    %% 
+    theTrials = find(nofixbreaktrials);
+    grat_info = grat_info(theTrials, :, :);
+    probe_info = probe_info(theTrials, :, :);
+    respCue = respCue(theTrials);
+    ntrials = size(theTrials, 2);
     
-    validity=(exp.randVars.validity(theTrials)<4)+1;
-    congruency=exp.randVars.probeside(theTrials);
+    validity = (exp.randVars.validity(theTrials)<4)+1;
+    congruency = exp.randVars.probeside(theTrials);
     delays=exp.randVars.delays(theTrials);
     
     %% Compare presented and reported probes to get number of correct reports
@@ -150,7 +92,7 @@ function [pboth,pone,pnone,probe_info,validity,delays,grat_info,respCue,...
     % theTrials contains the trial numbers for the conditions set by the parameters
     index = 1;
     for trial_n = theTrials
-        if trial_n <= size(expProbe.probeResponse1,2)
+        if trial_n <= size(expProbe.probeResponse1, 2)
             if ~isempty(expProbe.probeResponse1{trial_n})
                 idx1 = find(positions == expProbe.probeResponse1{trial_n});
                 idx2 = find(positions == expProbe.probeResponse2{trial_n});
