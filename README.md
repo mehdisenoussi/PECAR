@@ -1,3 +1,5 @@
+## Welcome to the PECAR repository.
+
 This is a set of MATLAB functions to perform the analysis on the PECAR experiment dataset. (Senoussi, Moreland, Busch & Dugué - 2018 (Submitted))
 
 To perform the analysis you need to download the MGL toolbox which we used to design the experiment and from which some codes are needed to "unpack" the data:
@@ -16,11 +18,10 @@ Finally you can run the scripts in that order to reproduce the figures from the 
 6. **pecar_poweranalysis_resampshuffletest.m** (to perform the bootstrap of the power analysis and plot its results)
 
 
-Design of the experiment.
+## Design of the experiment.
+<img src="/pecar_exp_design.png" width="400">
 
-<img src="/pecar_exp_design.png" width="600">
-
-TODO:
+## TODO:
 - Add more comments
 - Add figures of the experimental design and the results of each script
 
