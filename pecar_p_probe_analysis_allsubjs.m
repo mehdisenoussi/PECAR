@@ -1,9 +1,9 @@
-addpath(genpath('~/Dropbox/postphd/laura/pecar/soft/mrTools-master'))
-addpath(genpath('~/Dropbox/postphd/lpp/pecar/soft/mgl-master/'))
+addpath(genpath('./mgl-master/'))
 
-pecar_loc = '/Users/mehdisenoussi/work/lpp/pecar/';
-data_loc = [pecar_loc 'pecar_data/'];
-save_loc = '~/Dropbox/postphd/lpp/pecar/code/last_version/clean_forgit/';
+pecar_loc = './';
+data_loc = [pecar_loc, 'pecar_data/'];
+save_loc = [pecar_loc, 'results/'];
+
 delays = 40:40:520;
 n_del = size(delays, 2);
 
@@ -22,7 +22,7 @@ txtcorrect = '_onlycorrect';
 % the same quadrant. This will create another probability estimates results
 % file and save it in the folder "congruTrick"
 % this is only useful to generale panels A and B of figure 5 in the article
-congruTrick = true;
+congruTrick = false;
 if congruTrick
     if ~exist('./congruTrick', 'dir')
         mkdir('congruTrick')
@@ -69,10 +69,12 @@ end
 % trials, etc.
 if save_data
     if ~congruTrick
-        n_obs_data_filename = [save_loc, sprintf('%iobs_P1_P2_Delta%s%s%s',...
+        n_obs_data_filename = [save_loc,...
+            sprintf('%iobs_P1_P2_Delta%s%s%s',...
             n_obs, txtval, txtcongru, txtcorrect)];
     else
-        n_obs_data_filename=[save_loc, sprintf('congruTrick/%iobs_P1_P2_Delta%s%s%s_congruTrick',...
+        n_obs_data_filename=[save_loc,...
+            sprintf('congruTrick/%iobs_P1_P2_Delta%s%s%s_congruTrick',...
             n_obs, txtval, txtcongru, txtcorrect)];
     end
     save(n_obs_data_filename, 'observers', 'P1_all','P2_all', 'Delta_all');
@@ -80,7 +82,7 @@ end
 
 % Save all infos by trial order for all observers
 if save_raw_data
-    n_obs_data_filename = [save_loc sprintf(...
+    n_obs_data_filename = [save_loc, sprintf(...
         '%iobs_probe_grat_delay_respCue_validity_congruency_respGratCorr_infos', n_obs)];
     save(n_obs_data_filename, 'observers', 'probe_info_all',...
     'grat_info_all', 'delays_all', 'respCue_all', 'validity_all',...
