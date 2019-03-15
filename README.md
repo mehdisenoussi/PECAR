@@ -1,6 +1,6 @@
 ## Welcome to the PECAR repository.
 
-This is a set of MATLAB scripts to perform the analysis on the PECAR experiment dataset. (Senoussi, Moreland, Busch & Dugué - 2018 (Submitted))
+This is a set of MATLAB scripts to perform the analyses on the PECAR experiment dataset. (Senoussi, Moreland, Busch & Dugué - 2018 (Submitted))
 Here is a link to the preprint: [https://www.biorxiv.org/content/10.1101/443341v2](https://www.biorxiv.org/content/10.1101/443341v2)
 
 To perform the analyses you need to download the MGL toolbox which we used to design the experiment and from which some codes are needed to "unpack" the data:
