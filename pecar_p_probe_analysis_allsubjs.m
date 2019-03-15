@@ -24,8 +24,8 @@ txtcorrect = '_onlycorrect';
 % this is only useful to generale panels A and B of figure 5 in the article
 congruTrick = false;
 if congruTrick
-    if ~exist('./congruTrick', 'dir')
-        mkdir('congruTrick')
+    if ~exist([save_loc, './congruTrick'], 'dir')
+        mkdir([save_loc, 'congruTrick']);
     end
     congrus = 1:2;
 end

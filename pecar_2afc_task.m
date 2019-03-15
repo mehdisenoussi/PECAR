@@ -4,7 +4,7 @@
 
 pecar_loc = './'; % adapt to location of the scripts and data
 addpath(genpath([pecar_loc, 'mgl-master/']))
-data_loc = './data_pecar/';
+data_loc = [pecar_loc, 'data_pecar/'];
 
 % Load data
 observers = ['ym'; 'ac'; 'al'; 'sa'; 'el'; 'gm'; 'hs'; 'hw'; 'js'; 'ma'; 'nv'];
@@ -152,6 +152,8 @@ end
 
 %% Saving the file
 
+save_loc = [pecar_loc, 'results/'];
+
 n_obs_data_filename = [save_loc,...
     sprintf('%iobs_respTime_dprime_acc_byvalidity', n_obs)];
 if ~exist(n_obs_data_filename, 'file')
@@ -184,7 +186,7 @@ plot([1, 1], CI, 'k', 'LineWidth', 2)
 SEM = std(respTime_median(:, 2), [], 1) / sqrt(n_obs);
 % compute 95% confidence interval
 perc = .05;
-ts = tinv([perc / 2., 1 - (perc / 2.)], 11 - 1);
+ts = tinv([perc / 2., 1 - (perc / 2.)], n_obs - 1);
 CI = mean(respTime_median(:, 2), 1) + ts * SEM;
 
 meantoplot = mean(respTime_median(:, 2), 1);
@@ -220,7 +222,7 @@ scatter(ones(1, n_obs) + .2, dprime_allsubjs(:, 1), circ_sz,...
 SEM = std(dprime_allsubjs(:, 2) , [], 1) / sqrt(n_obs);
 % compute 95% confidence interval
 perc = .05;
-ts = tinv([perc / 2., 1 - (perc / 2.)], 11 - 1);
+ts = tinv([perc / 2., 1 - (perc / 2.)], n_obs - 1);
 CI = mean(dprime_allsubjs(:, 2), 1) + ts * SEM;
 
 meantoplot = mean(dprime_allsubjs(:, 2), 1);

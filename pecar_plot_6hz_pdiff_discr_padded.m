@@ -1,15 +1,15 @@
 % the PECAR data are sampled every 40ms for 480ms. So we add 18 time points
 % (which reprensents 720ms) before and 19 time points after (760ms),
 % yielding a 2030ms segment
-pecar_loc='/Users/mehdisenoussi/work/lpp/pecar/';
+pecar_loc = './';
 data_loc = [pecar_loc, 'pecar_data/'];
-save_loc = '~/Dropbox/postphd/lpp/pecar/code/last_version/clean_forgit/';
+save_loc = [pecar_loc, 'results/'];
+
 byvalidity = true; bycongru = true; onlycorrect = true;
 
-txtval=''; txtcongru=''; txtcorrect='';
-if byvalidity; vals = 1:2; txtval = '_byvalidity'; else vals = [1]; end
-if bycongru; congrus = 1:3; txtcongru = '_bycongrus'; else congrus = [1]; end
-if onlycorrect; txtcorrect = '_onlycorrect'; end
+vals = 1:2; txtval = '_byvalidity';
+congrus = 1:3; txtcongru = '_bycongrus';
+txtcorrect = '_onlycorrect';
 
 n_obs = 11;
 

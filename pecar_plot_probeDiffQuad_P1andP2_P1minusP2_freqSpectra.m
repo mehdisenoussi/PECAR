@@ -1,11 +1,11 @@
-pecar_loc = '/Users/mehdisenoussi/work/lpp/pecar/';
-data_loc = [pecar_loc 'pecar_data/'];
-save_loc = '~/Dropbox/postphd/lpp/pecar/code/last_version/clean_forgit/';
+pecar_loc = './';
+data_loc = [pecar_loc, 'pecar_data/'];
+save_loc = [pecar_loc, 'results/'];
+
 delays = 40:40:520;
 n_del = size(delays, 2);
 
-observers = ['ym'; 'ac'; 'al'; 'sa'; 'el'; 'gm'; 'hs'; 'hw'; 'js'; 'ma'; 'nv'];
-n_obs = size(observers, 1);
+n_obs = 11;
 
 byvalidity = true; bycongru = true; onlycorrect = true;
 
@@ -25,7 +25,7 @@ ylims = [-.1, .77];
 
 vals = 2:-1:1;
 
-n_obs_data_filename = [save_loc sprintf('%iobs_P1_P2_Delta%s%s%s',...
+n_obs_data_filename = [save_loc, sprintf('%iobs_P1_P2_Delta%s%s%s',...
     n_obs, txtval, txtcongru, txtcorrect)];
 load(n_obs_data_filename)
 
@@ -99,7 +99,7 @@ end
 %% P1 minus P2
 Pdiff = P1_all - P2_all;
 
-ylims = [-.5 .7];
+ylims = [-.5, .7];
 
 for val = vals
     subplot(3, 2, plotn); plotn = plotn+1; hold on;        
@@ -139,15 +139,11 @@ end
 
 %%
 
-load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_valid%s_congru1_%isubjs.mat', txtcorrect, n_obs)])
-load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru1_%isubjs.mat', txtcorrect, n_obs)])
+load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_valid%s_congru1_%isubjs.mat',...
+    txtcorrect, n_obs)])
+load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru1_%isubjs.mat',...
+    txtcorrect, n_obs)])
 fft_p_all = cat(3, fft_Pdiff_byObs_p_pad_invalid, fft_Pdiff_byObs_p_pad_valid);
-% load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_valid%s_congru2_%isubjs.mat', txtcorrect, n_obs)])
-% load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru2_%isubjs.mat', txtcorrect, n_obs)])
-% fft_p_all = cat(4, fft_p_all, cat(3, fft_Pdiff_byObs_p_pad_invalid, fft_Pdiff_byObs_p_pad_valid));
-% load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_valid%s_congru3_%isubjs.mat', txtcorrect, n_obs)])
-% load([save_loc sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru3_%isubjs.mat', txtcorrect, n_obs)])
-% fft_p_all = cat(4, fft_p_all, cat(3, fft_Pdiff_byObs_p_pad_invalid, fft_Pdiff_byObs_p_pad_valid));
 
 repeatnumber = 100000;
 

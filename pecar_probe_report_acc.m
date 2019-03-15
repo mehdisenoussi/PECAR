@@ -1,11 +1,14 @@
 %% This script computes accuracy for probe reports depending on probe positions
-pecar_loc = '/Users/mehdisenoussi/work/lpp/pecar/';
+pecar_loc = './';
 data_loc = [pecar_loc, 'pecar_data/'];
-save_loc = '~/Dropbox/postphd/lpp/pecar/code/last_version/clean_forgit/';
+save_loc = [pecar_loc, 'results/'];
+
+n_obs = 11;
+
 % load all variable containing the "raw" data
 % (i.e. correct/incorrect, etc. for each trial not P1 and P2 estimates)
-load([save_loc, '11obs_probe_grat_delay_respCue_validity_congruency_respGratCorr_infos.mat'])
-n_obs = size(probe_info_all, 2);
+load([save_loc,...
+    sprintf('%iobs_probe_grat_delay_respCue_validity_congruency_respGratCorr_infos.mat', n_obs)])
 
 % only trials for which the observer was correct on the 2AFC task?
 only_correct = 1;

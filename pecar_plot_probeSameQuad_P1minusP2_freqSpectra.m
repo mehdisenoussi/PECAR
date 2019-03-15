@@ -1,15 +1,11 @@
-addpath(genpath('~/Dropbox/postphd/laura/pecar/soft/mrTools-master'))
-addpath(genpath('~/Dropbox/postphd/lpp/pecar/soft/mgl-master/'))
-
-pecar_loc = '/Users/mehdisenoussi/work/lpp/pecar/';
-data_loc = [pecar_loc 'pecar_data/'];
-save_loc = '~/Dropbox/postphd/lpp/pecar/code/last_version/clean_forgit/congruTrick/';
+pecar_loc = './';
+data_loc = [pecar_loc, 'pecar_data/'];
+save_loc = [pecar_loc, 'results/congruTrick/'];
 
 delays = 40:40:520;
 n_del = size(delays, 2);
 
-observers = ['ym'; 'ac'; 'al'; 'sa'; 'el'; 'gm'; 'hs'; 'hw'; 'js'; 'ma'; 'nv'];
-n_obs = size(observers, 1);
+n_obs = 11;
 
 byvalidity = true; bycongru = true; onlycorrect = true;
 
@@ -39,7 +35,7 @@ cong = 1;
 Pdiff = P1_all - P2_all;
 
 plotn = 1;
-ylims = [-.4 .65];
+ylims = [-.4, .65];
 figure;
 for val = vals
     subplot(2, 2, plotn); plotn = plotn+1; hold on;        
@@ -81,8 +77,10 @@ end
 
 %%
 
-load([save_loc, sprintf('fft_Pdiff_byObs_p_pad_2s_valid%s_congru1_%isubjs.mat', txtcorrect, n_obs)])
-load([save_loc, sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru1_%isubjs.mat', txtcorrect, n_obs)])
+load([save_loc, sprintf('fft_Pdiff_byObs_p_pad_2s_valid%s_congru1_%isubjs.mat',...
+    txtcorrect, n_obs)])
+load([save_loc, sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru1_%isubjs.mat',...
+    txtcorrect, n_obs)])
 fft_p_all = cat(3, fft_Pdiff_byObs_p_pad_invalid, fft_Pdiff_byObs_p_pad_valid);
 
 repeatnumber = 100000;
@@ -164,7 +162,7 @@ suptitle(sprintf(['Probability estimates results for probes on same quadrants - 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-save_loc = '~/Dropbox/postphd/lpp/pecar/code/last_version/clean_forgit/';
+save_loc = [pecar_loc, 'results/'];
 
 n_obs_data_filename = [save_loc, sprintf('%iobs_P1_P2_Delta%s%s%s',...
     n_obs, txtval, txtcongru, txtcorrect)];
@@ -193,7 +191,7 @@ cong = [2, 3];
 Pdiff = P1_all - P2_all;
 
 plotn = 1;
-ylims = [-.5 .7];
+ylims = [-.5, .7];
 figure;
 for val = vals
     for cong = congrus
@@ -240,7 +238,7 @@ for val = vals
 end
 
 
-%
+% Plot spectra
 
 load([save_loc, sprintf('fft_Pdiff_byObs_p_pad_2s_invalid%s_congru2_%isubjs.mat', txtcorrect, n_obs)])
 fft_p_all = fft_Pdiff_byObs_p_pad_invalid;
