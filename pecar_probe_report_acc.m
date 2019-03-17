@@ -1,6 +1,5 @@
 %% This script computes accuracy for probe reports depending on probe positions
 pecar_loc = './';
-data_loc = [pecar_loc, 'pecar_data/'];
 save_loc = [pecar_loc, 'results/'];
 
 n_obs = 11;
@@ -125,7 +124,7 @@ end
 
 xfreq= .5:.5:12; n_freqs = length(xfreq);
 % compute permutations
-compute_diff_perm = true;
+compute_diff_perm = false;
 repeatnumber = 100000; ndel = 13;
 if compute_diff_perm
     % here 1 is valid and 2 is invalid
@@ -186,13 +185,14 @@ ci = 1 - (.05/6);
 ci2 = 1 - .05;
 
 % what percentile of confidence interval do you want to plot
-perc = .05;
+perc = .05; ts = tinv(1-perc/2., n_obs - 1);
 
 n_del = size(delays, 2);
 
 % load custom black to green colormap
 load('custom_black2green_cmap.mat')
 
+lineW = 2;
 
 yminspectra = [.12, .3];
 ymaxspectra = [.78, 1.3];
@@ -216,12 +216,16 @@ for valind = 1:2
     % compute SEM
     SEM = nanstd(temp, [], 1) / sqrt(n_obs);
     % compute confidence interval
-    ts = tinv([perc/2., 1 - perc/2.], n_obs-1);
-    CI = repmat(avgtoplot, 2, 1) + ts' * SEM;
+    % CI = ts * SEM;
+    CI = SEM;
+    
     plot(delays, avgtoplot, 'ko-', 'MarkerEdgeColor', [0, 0, 0],...
         'MarkerFaceColor', [1, 1, 1], 'LineWidth', 2, 'MarkerSize', 10);
     for delind = 1:n_del
-        plot([delays(delind), delays(delind)], [CI(1, delind); CI(2, delind)], 'k', 'LineWidth', 2)
+        ys = [avgtoplot(delind) - CI(delind),...
+                avgtoplot(delind) + CI(delind)];
+        plot([delays(delind), delays(delind)], ys, 'Color',...
+                'k', 'LineWidth', lineW);
     end
     if valind == 1
         title('Valid');
@@ -230,7 +234,7 @@ for valind = 1:2
     end
     
     xlabel('Time from search task onset [ms]','FontSize',12,'Fontname','Ariel')
-    ylabel(sprintf('Probe report accuracy');
+    ylabel('Probe report accuracy');
     
     ylim(ylims_diff); xlim([0, 540])
     grid()
@@ -269,7 +273,7 @@ for valind = 1:2
         avgtoplot = squeeze(nanmean(a_fft_perfdiff_pad(:, valind, :), 1));
 
         plot3(xfreq, zeros(size(xfreq, 2)), avgtoplot,...
-            'ko-', 'LineWidth', 2, 'MarkerFaceColor', [1, 1, 1],...
+            'ko-', 'LineWidth', lineW, 'MarkerFaceColor', [1, 1, 1],...
             'MarkerSize', 8, 'Color', [.2, .2, .2])            
     end
     zlim([yminspectra(valind), ymaxspectra(valind)]);
@@ -277,7 +281,9 @@ for valind = 1:2
         
 end
 
-suptitle(sprintf('Probe report accuracy difference analysis for probe on %s side', probes_side));
+% this is commented out because it isn't always available depending on the
+% matlab version and toolboxes you have.
+% suptitle(sprintf('Probe report accuracy difference analysis for probe on %s side', probes_side));
 
 
 

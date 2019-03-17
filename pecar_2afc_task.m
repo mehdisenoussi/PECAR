@@ -153,6 +153,10 @@ end
 %% Saving the file
 
 save_loc = [pecar_loc, 'results/'];
+if ~exist(save_loc, 'dir')
+    mkdir(save_loc);
+end
+
 
 n_obs_data_filename = [save_loc,...
     sprintf('%iobs_respTime_dprime_acc_byvalidity', n_obs)];
@@ -196,12 +200,14 @@ plot([2, 2], CI, 'k', 'LineWidth', 2)
 
 xlabel('Conditions'); ylabel('Average median'); grid on;
 title(sprintf('Average median reaction times\nvalid versus invalid condition'));
-xlim([0, 3]);
+xlim([0, 3]); ylim([.39, .6])
 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % d-prime by validity
 subplot(1, 2, 1); hold on; 
+
+circ_sz = 8;
 
 % compute SEM
 SEM = std(dprime_allsubjs(:,1) ,[], 1) / sqrt(n_obs);

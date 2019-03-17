@@ -1,7 +1,7 @@
 addpath(genpath('./mgl-master/'))
 
 pecar_loc = './';
-data_loc = [pecar_loc, 'pecar_data/'];
+data_loc = [pecar_loc, 'data_pecar/'];
 save_loc = [pecar_loc, 'results/'];
 
 delays = 40:40:520;
@@ -22,7 +22,7 @@ txtcorrect = '_onlycorrect';
 % the same quadrant. This will create another probability estimates results
 % file and save it in the folder "congruTrick"
 % this is only useful to generale panels A and B of figure 5 in the article
-congruTrick = false;
+congruTrick = true;
 if congruTrick
     if ~exist([save_loc, './congruTrick'], 'dir')
         mkdir([save_loc, 'congruTrick']);

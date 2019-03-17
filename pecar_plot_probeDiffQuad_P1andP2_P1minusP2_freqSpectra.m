@@ -1,5 +1,4 @@
 pecar_loc = './';
-data_loc = [pecar_loc, 'pecar_data/'];
 save_loc = [pecar_loc, 'results/'];
 
 delays = 40:40:520;
@@ -29,14 +28,13 @@ n_obs_data_filename = [save_loc, sprintf('%iobs_P1_P2_Delta%s%s%s',...
     n_obs, txtval, txtcongru, txtcorrect)];
 load(n_obs_data_filename)
 
-lineW = 4;
+lineW = 2;
 markersize = 8;
 perc = .05; ts = tinv(1-perc/2., n_obs - 1);
 
 % plot the "probe on different quadrant" congruency condition
 cong = 1;
-    
-%figure('Position', get(groot, 'ScreenSize'));
+
 figure()
 plotn = 1;
 for val = vals
@@ -49,6 +47,14 @@ for val = vals
     avgstoplot = [nanmean(P1_all(:, val, cong, :), 4),...
         nanmean(P2_all(:, val, cong, :), 4)];
     barDir = avgstoplot(:, 1) > avgstoplot(:, 2);
+    
+    for Pind = 1:2
+        plot(delays, avgstoplot(:, Pind), 'o-', 'Color', cols(Pind, :), ...
+        'MarkerEdgeColor', cols(Pind, :), 'MarkerFaceColor', [1, 1, 1],...
+        'LineWidth', lineW, 'MarkerSize', markersize);
+    end
+    legend('p1', 'p2', 'Location', 'NorthWest')
+    
     Pind = 1;
     for Pall = {P1_all, P2_all}
         Pall = Pall{1};
@@ -56,8 +62,8 @@ for val = vals
         % compute SEM
         SEM = nanstd(Pall(:, val, cong, :), [], 4) ./ sqrt(n_obs);
         % compute 95% confidence interval
-        CI = ts * SEM;
-        % CI = SEM;
+        % CI = ts * SEM;
+        CI = SEM;
 
         if Pind == 2; barDir = ~barDir; end
         for delind = 1:length(delays)
@@ -71,15 +77,15 @@ for val = vals
             plot([delays(delind), delays(delind)], ys, 'Color',...
                 cols(Pind, :), 'LineWidth', lineW);
         end
-        plot(delays, avgstoplot(:, Pind), 'o-', 'Color', cols(Pind, :), ...
-            'MarkerEdgeColor', cols(Pind, :), 'MarkerFaceColor', [1, 1, 1],...
-            'LineWidth', lineW, 'MarkerSize', markersize);
-
         Pind = Pind + 1;
     end
-
-    if cong == 1 && val==2; title('Valid'); elseif cong == 1 && val==1; title('Invalid'); end
-    legend('p1', 'p2', 'Location', 'NorthWest')
+    
+    if cong == 1
+        if val == 2; title('Valid');
+        elseif val == 1; title('Invalid');
+        end
+    end
+    
     
     set(gca, 'YTick', -.1:.2:.75, 'FontSize', 13, 'LineWidth', 2', 'Fontname', 'Ariel')
     set(gca, 'XTick', 0:100:500, 'FontSize', 13, 'LineWidth', 2', 'Fontname', 'Ariel')
@@ -92,7 +98,7 @@ for val = vals
     end
 
     ylim(ylims); xlim([0, 540])
-    %axis square
+    
 end
 
 
@@ -109,8 +115,8 @@ for val = vals
     SEM = nanstd(Pdiff(:, val, cong, :), [], 4) ./ sqrt(n_obs);
 
     % compute 95% confidence interval
-    CI = ts * SEM;
-    %CI = SEM;
+    % CI = ts * SEM;
+    CI = SEM;
 
     for delind = 1:length(delays)
         ys = [avgtoplot(delind) - CI(delind),...
@@ -195,7 +201,7 @@ for val = vals
     avgtoplot = squeeze(nanmean(a_fft_pdiff_pad(val, cong, :, :), 4));
     plot3(xfreq, zeros(size(xfreq, 2)), avgtoplot,...
         'ko-', 'LineWidth', 2, 'MarkerFaceColor', [1, 1, 1],...
-        'MarkerSize', 10, 'Color', [.2, .2, .2])
+        'MarkerSize', markersize, 'Color', [.2, .2, .2])
     zlim([ymin, ymax]);
     xlim([xmin, xmax])
 
@@ -209,5 +215,8 @@ end
 
 if onlycorrect; trialmask = 'only correct trials';
 else trialmask = 'all trials'; end
-suptitle(sprintf(['Probability estimates results for probes on different quadrants - %i subj\n'...
-    'p<0.05 (bonferroni corrected) - mask: %s'], n_obs, trialmask));
+
+% this is commented out because it isn't always available depending on the
+% matlab version and toolboxes you have.
+% suptitle(sprintf(['Probability estimates results for probes on different quadrants - %i subj\n'...
+%     'p<0.05 (bonferroni corrected) - mask: %s'], n_obs, trialmask));

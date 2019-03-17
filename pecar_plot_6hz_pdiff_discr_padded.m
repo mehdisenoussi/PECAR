@@ -2,7 +2,6 @@
 % (which reprensents 720ms) before and 19 time points after (760ms),
 % yielding a 2030ms segment
 pecar_loc = './';
-data_loc = [pecar_loc, 'pecar_data/'];
 save_loc = [pecar_loc, 'results/'];
 
 byvalidity = true; bycongru = true; onlycorrect = true;
@@ -113,9 +112,8 @@ for val = 2:-1:1
     plot(inds(val), meantoplot, 'ko', 'MarkerEdgeColor', [0, 0, 0],...
             'MarkerFaceColor', [0, 0, 0], 'LineWidth', 1.5, 'MarkerSize', 10);
     plot([inds(val), inds(val)], CI, 'k', 'LineWidth', 2)
-    
-
 end
+
 xlim([.75, 2.25]); ylim([0, 3])
 [h_discr, p_discr, ci_discr, stat_discr] = ttest(squeeze(...
     a_fft_discr_pad_pecar(1, freqind, :)),...
@@ -128,9 +126,11 @@ set(gca,'xticklabel',{'Valid','Invalid'}, 'fontsize', 14);
 if onlycorrect; txtcorrect_title = 'Only correct trials';
 else txtcorrect_title = 'All trials'; end
 
-suptitle(sprintf(['Amplitude of %ihz component for P1-P2 difference ' ...
-    'and Discriminant\nin valid versus invalid conditions\n%s'],...
-    sampled_padfreqs_pecar(freqind), txtcorrect_title));
+% this is commented out because it isn't always available depending on the
+% matlab version and toolboxes you have.
+% suptitle(sprintf(['Amplitude of %ihz component for P1-P2 difference ' ...
+%     'and Discriminant\nin valid versus invalid conditions\n%s'],...
+%     sampled_padfreqs_pecar(freqind), txtcorrect_title));
 
 
 % print it in the command line also
