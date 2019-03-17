@@ -3,8 +3,8 @@
 
 clear all; close all
 
-datadr = './processed_data/';
-datafile = dir([datadr,'11obs_probe*.mat']);
+datadr = './results/';
+datafile = dir([datadr, '11obs_probe*.mat']);
 load(fullfile(datadr, datafile.name))
 d = probe_info_all;
 validity = validity_all;

@@ -24,7 +24,7 @@ rng(seed)
 Nsamp = 100000;  % Number of samples to bootstrap
 p = .05; % What is our alpha?
 
-datadr = './processed_data/';
+datadr = './results/';
 datafile = dir([datadr,'datastruct*.mat']);
 load(fullfile(datadr, datafile.name))
 
@@ -81,7 +81,9 @@ for val_ind = 1:2
                 quadratic_analysis(Pboth, Pnone);
             
             %--- Shuffle
-            idx_sh = Shuffle(idx);
+            % Shuffle doesn't exist on v.2015b           
+            % idx_sh = Shuffle(idx);
+            idx_sh = randsample(idx, size(idx, 2));
             r1tmp_sh = r1(idx_sh); % Only shuffle one set of responses
             r2tmp_sh = r2(idx);
             

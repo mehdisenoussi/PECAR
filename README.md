@@ -1,6 +1,7 @@
 ## Welcome to the PECAR repository.
 
 This is a set of MATLAB scripts to perform the analyses on the PECAR experiment dataset. (Senoussi, Moreland, Busch & Dugué - 2018 (Submitted))
+These scripts were written and tested on MATLAB version 2015b.
 Here is a link to the preprint: [https://www.biorxiv.org/content/10.1101/443341v2](https://www.biorxiv.org/content/10.1101/443341v2)
 
 To perform the analyses you need to download the MGL toolbox which we used to design the experiment and from which some codes are needed to "unpack" the data:
@@ -17,10 +18,10 @@ Finally you can run the scripts in that order to reproduce the figures from the 
 4) pecar_plot_6hz_pdiff_discr_padded.m
 5) pecar_probe_report_acc.m
 6) pecar_plot_probeSameQuad_P1minusP2_freqSpectra.m
-7) pecar_poweranalysis_resampshuffletest.m
+7) pecar_datareformat_for_power_analysis.m
+8) pecar_poweranalysis_resampshuffletest.m
 
 Todo:
 	- add more comments
 
 Thank you for your interest!
-
