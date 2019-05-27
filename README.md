@@ -1,8 +1,8 @@
 ## Welcome to the PECAR repository.
 
-This is a set of MATLAB scripts to perform the analyses on the PECAR experiment dataset. (Senoussi, Moreland, Busch & Dugué - 2018 (Submitted))
+This is a set of MATLAB scripts to perform the analyses on the PECAR experiment dataset. (Senoussi, M., Moreland, J. C., Busch, N. A., & Dugué, L. Journal of Vision (2019))
 These scripts were written and tested on MATLAB version 2015b.
-Here is a link to the preprint: [https://www.biorxiv.org/content/10.1101/443341v2](https://www.biorxiv.org/content/10.1101/443341v2)
+Here is a link to the article published in Journal of Vision: [https://jov.arvojournals.org/article.aspx?articleid=2734837](https://jov.arvojournals.org/article.aspx?articleid=2734837)
 
 To perform the analyses you need to download the MGL toolbox which we used to design the experiment and from which some codes are needed to "unpack" the data:
 [MGL-toolbox](http://gru.stanford.edu/doku.php/mgl/download)
@@ -21,7 +21,5 @@ Finally you can run the scripts in that order to reproduce the figures from the 
 7) pecar_datareformat_for_power_analysis.m
 8) pecar_poweranalysis_resampshuffletest.m
 
-Todo:
-	- add more comments
 
 Thank you for your interest!
