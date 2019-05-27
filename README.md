@@ -1,7 +1,9 @@
 ## Welcome to the PECAR repository.
 
 This is a set of MATLAB scripts to perform the analyses on the PECAR experiment dataset (Senoussi, M., Moreland, J. C., Busch, N. A., & Dugué, L. Journal of Vision (2019)).
+
 These scripts were written and tested on MATLAB version 2015b.
+
 Here is a link to the article published in Journal of Vision: [https://jov.arvojournals.org/article.aspx?articleid=2734837](https://jov.arvojournals.org/article.aspx?articleid=2734837)
 
 To perform the analyses you need to download the MGL toolbox which we used to design the experiment and from which some codes are needed to "unpack" the data:
